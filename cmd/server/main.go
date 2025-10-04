@@ -9,7 +9,7 @@ func main() {
 	var key []byte
 
 	// Example key, we should replace this later
-	key = []byte("example")
+	key = []byte("A0KWJW3qRCiYcEj3")
 
 	connectionHandler := func(conn net.Conn) { handleConnection(conn, server) }
 	server = NewChatServer("localhost", 8080, key, connectionHandler)

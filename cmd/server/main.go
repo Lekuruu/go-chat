@@ -26,12 +26,14 @@ func handleConnection(conn net.Conn, server *ChatServer) {
 	for {
 		packet, err := client.ReadPacket()
 		if err != nil {
+			client.Logger.Errorf("Failed to read authentication packet: %v", err)
 			client.SendError(ErrInvalidPacket)
 			return
 		}
 
 		handler, ok := AuthHandlers[packet.Id]
 		if !ok {
+			client.Logger.Errorf("Unknown authentication packet ID: %v", packet.Id)
 			client.SendError(ErrUnknownPacket)
 			return
 		}
@@ -41,6 +43,10 @@ func handleConnection(conn net.Conn, server *ChatServer) {
 			break
 		}
 	}
+
+	// Change logger name to client's username
+	client.Logger.Infof("Client authenticated with username: '%s'", client.Name)
+	client.Logger.SetName(client.Name)
 
 	// Add client to server map & remove on disconnect
 	server.Clients[client.Name] = client
@@ -53,12 +59,14 @@ func handleConnection(conn net.Conn, server *ChatServer) {
 	for {
 		packet, err := client.ReadPacket()
 		if err != nil {
+			client.Logger.Errorf("Failed to read packet: %v", err)
 			client.SendError(ErrInvalidPacket)
 			return
 		}
 
 		handler, ok := MainHandlers[packet.Id]
 		if !ok {
+			client.Logger.Errorf("Unknown packet ID: %v", packet.Id)
 			client.SendError(ErrUnknownPacket)
 			return
 		}

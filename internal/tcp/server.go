@@ -8,19 +8,21 @@ import (
 )
 
 type Server struct {
+	Name   string
 	Host   string
 	Port   int
-	Logger logging.Logger
+	Logger *logging.Logger
 
 	listener       net.Listener
 	requestHandler func(net.Conn)
 }
 
-func NewServer(host string, port int, logger logging.Logger, handler func(net.Conn)) *Server {
+func NewServer(name string, host string, port int, handler func(net.Conn)) *Server {
 	return &Server{
+		Name:           name,
 		Host:           host,
 		Port:           port,
-		Logger:         logger,
+		Logger:         logging.CreateLogger(name, logging.INFO),
 		requestHandler: handler,
 	}
 }
@@ -34,11 +36,12 @@ func (server *Server) Run() error {
 	if err != nil {
 		return err
 	}
+	defer listener.Close()
 	server.listener = listener
-	defer server.listener.Close()
+	server.Logger.Infof("Listening on '%s' ...", server.Bind())
 
 	for {
-		conn, err := server.listener.Accept()
+		conn, err := listener.Accept()
 		if err != nil {
 			return err
 		}

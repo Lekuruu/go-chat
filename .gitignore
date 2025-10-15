@@ -122,5 +122,5 @@ fabric.properties
 .history
 .ionide
 
-# Windows build script
-build.ps1
+# Windows build scripts
+build*.ps1

@@ -7,6 +7,7 @@ const (
 	PacketIdError PacketId = iota
 	PacketIdChallenge
 	PacketIdNickname
+	PacketIdNicknameAck
 	PacketIdNames
 	PacketIdJoin
 	PacketIdQuit

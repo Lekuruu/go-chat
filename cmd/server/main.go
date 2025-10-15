@@ -59,6 +59,10 @@ func handleConnection(conn net.Conn, server *ChatServer) {
 	// Main communication loop
 	for {
 		packet, err := client.ReadPacket()
+		if err != nil && err.Error() == "EOF" {
+			client.Logger.Infof("Client disconnected")
+			return
+		}
 		if err != nil {
 			client.Logger.Errorf("Failed to read packet: %v", err)
 			client.SendError(ErrInvalidPacket)

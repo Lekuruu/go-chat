@@ -19,13 +19,13 @@ jobs:
           - os: ubuntu-latest
             goos: linux
             goarch: amd64
-            client_binary: client
-            server_binary: server
+            client_binary: client-linux
+            server_binary: server-linux
           - os: windows-latest
             goos: windows
             goarch: amd64
-            client_binary: client.exe
-            server_binary: server.exe
+            client_binary: client-windows.exe
+            server_binary: server-windows.exe
 
     steps:
     - name: Checkout code

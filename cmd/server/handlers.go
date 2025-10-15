@@ -47,6 +47,12 @@ func handleAuthChallenge(packet *protocol.Packet, client *Client) {
 }
 
 func handleNickname(packet *protocol.Packet, client *Client) {
+	if client.IsAuthenticated {
+		client.Logger.Warning("Client attempted to set nickname after authentication")
+		client.SendError(ErrAlreadyAuthenticated)
+		return
+	}
+
 	var nicknameString protocol.String
 
 	if err := nicknameString.FromBytes(packet.Data); err != nil {
@@ -64,6 +70,7 @@ func handleNickname(packet *protocol.Packet, client *Client) {
 
 	client.Name = nickname
 	client.IsAuthenticated = true
+	client.Server.Clients[client.Name] = client
 
 	nicknameAck := &protocol.Packet{Id: protocol.PacketIdNicknameAck}
 	if err := client.SendPacket(nicknameAck); err != nil {

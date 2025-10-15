@@ -40,7 +40,7 @@ func main() {
 	client.Logger.Infof("Connected to %s", client.Address())
 
 	if err := handleAuthentication(client); err != nil {
-		client.Logger.Errorf("Authentication failed: %v", err)
+		client.Logger.Error(err)
 		client.Logger.WaitForInput()
 		return
 	}

@@ -48,6 +48,12 @@ func (c *ChatClient) Address() string {
 	return c.Conn.RemoteAddr().String()
 }
 
+func (c *ChatClient) Quit() {
+	if c.UI != nil {
+		c.UI.Quit()
+	}
+}
+
 func (c *ChatClient) AddSystemMessage(format string, args ...interface{}) {
 	if c.UI != nil {
 		c.UI.AddSystemMessage(format, args...)

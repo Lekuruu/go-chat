@@ -24,6 +24,7 @@ type ChatUI struct {
 	messages []ChatMessage
 	users    []string
 	mu       sync.Mutex
+	quitting bool
 }
 
 type model struct {
@@ -82,8 +83,8 @@ func NewChatUI(sendMessage func(string)) *ChatUI {
 	}
 
 	m := model{
-		messages:    ui.messages,
-		users:       ui.users,
+		messages:    make([]ChatMessage, 0),
+		users:       make([]string, 0),
 		sendMessage: sendMessage,
 	}
 
@@ -104,8 +105,22 @@ func (ui *ChatUI) Run() error {
 	return err
 }
 
+func (ui *ChatUI) Quit() {
+	ui.mu.Lock()
+	ui.quitting = true
+	ui.mu.Unlock()
+
+	if ui.program != nil {
+		ui.program.Quit()
+	}
+}
+
 func (ui *ChatUI) AddMessage(sender, content string) {
 	ui.mu.Lock()
+	if ui.quitting {
+		ui.mu.Unlock()
+		return
+	}
 	msg := ChatMessage{
 		Timestamp: time.Now(),
 		Sender:    sender,
@@ -122,6 +137,10 @@ func (ui *ChatUI) AddMessage(sender, content string) {
 
 func (ui *ChatUI) AddSystemMessage(format string, args ...interface{}) {
 	ui.mu.Lock()
+	if ui.quitting {
+		ui.mu.Unlock()
+		return
+	}
 	msg := ChatMessage{
 		Timestamp: time.Now(),
 		Content:   fmt.Sprintf(format, args...),
@@ -137,6 +156,10 @@ func (ui *ChatUI) AddSystemMessage(format string, args ...interface{}) {
 
 func (ui *ChatUI) SetUsers(users []string) {
 	ui.mu.Lock()
+	if ui.quitting {
+		ui.mu.Unlock()
+		return
+	}
 	ui.users = users
 	ui.mu.Unlock()
 
@@ -147,6 +170,10 @@ func (ui *ChatUI) SetUsers(users []string) {
 
 func (ui *ChatUI) AddUser(user string) {
 	ui.mu.Lock()
+	if ui.quitting {
+		ui.mu.Unlock()
+		return
+	}
 	ui.users = append(ui.users, user)
 	users := make([]string, len(ui.users))
 	copy(users, ui.users)
@@ -159,6 +186,10 @@ func (ui *ChatUI) AddUser(user string) {
 
 func (ui *ChatUI) RemoveUser(user string) {
 	ui.mu.Lock()
+	if ui.quitting {
+		ui.mu.Unlock()
+		return
+	}
 	for i, u := range ui.users {
 		if u == user {
 			ui.users = append(ui.users[:i], ui.users[i+1:]...)

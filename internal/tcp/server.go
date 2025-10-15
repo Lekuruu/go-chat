@@ -22,7 +22,7 @@ func NewServer(name string, host string, port int, handler func(net.Conn)) *Serv
 		Name:           name,
 		Host:           host,
 		Port:           port,
-		Logger:         logging.CreateLogger(name, logging.INFO),
+		Logger:         logging.CreateLogger(name, logging.DEBUG),
 		requestHandler: handler,
 	}
 }

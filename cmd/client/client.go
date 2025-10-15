@@ -48,17 +48,17 @@ func (c *ChatClient) Address() string {
 	return c.Conn.RemoteAddr().String()
 }
 
-func (c *ChatClient) Quit() {
-	if c.UI != nil {
-		c.UI.Quit()
-	}
-}
-
 func (c *ChatClient) AddSystemMessage(format string, args ...interface{}) {
 	if c.UI != nil {
 		c.UI.AddSystemMessage(format, args...)
 	}
 	c.Logger.Infof(format, args...)
+}
+
+func (c *ChatClient) ShowDisconnectMessage() {
+	if c.UI != nil {
+		c.UI.ShowDisconnectMessage("Connection lost!")
+	}
 }
 
 func (c *ChatClient) ReadPacket() (*protocol.Packet, error) {

@@ -43,22 +43,13 @@ func main() {
 	})
 
 	// Handle all incoming packets in the background
-	done := make(chan bool)
-	go func() {
-		handlePackets(client)
-		done <- true
-	}()
+	go handlePackets(client)
 
-	// Run the UI
-	go func() {
-		if err := client.UI.Run(); err != nil {
-			client.Logger.Errorf("UI error: %v", err)
-		}
-		done <- true
-	}()
+	// Run the UI, should block until user quits
+	if err := client.UI.Run(); err != nil {
+		client.Logger.Errorf("UI error: %v", err)
+	}
 
-	// Wait for either the packet handler or UI to finish
-	<-done
 	client.Conn.Close()
 }
 
@@ -118,7 +109,7 @@ func handleAuthentication(client *ChatClient) error {
 }
 
 func handlePackets(client *ChatClient) {
-	defer client.Quit()
+	defer client.ShowDisconnectMessage()
 
 	for {
 		packet, err := client.ReadPacket()

@@ -28,18 +28,21 @@ type ChatUI struct {
 }
 
 type model struct {
-	viewport    viewport.Model
-	textarea    textarea.Model
-	messages    []ChatMessage
-	users       []string
-	ready       bool
-	width       int
-	height      int
-	sendMessage func(string)
+	viewport      viewport.Model
+	textarea      textarea.Model
+	messages      []ChatMessage
+	users         []string
+	ready         bool
+	width         int
+	height        int
+	sendMessage   func(string)
+	disconnected  bool
+	disconnectMsg string
 }
 
 type newMessageMsg ChatMessage
 type usersUpdateMsg []string
+type disconnectMsg string
 
 var (
 	headerStyle = lipgloss.NewStyle().
@@ -74,6 +77,14 @@ var (
 			BorderStyle(lipgloss.NormalBorder()).
 			BorderTop(true).
 			BorderForeground(lipgloss.Color("240"))
+
+	disconnectStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("196")).
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderTop(true).
+			BorderForeground(lipgloss.Color("240")).
+			Padding(1)
 )
 
 func NewChatUI(sendMessage func(string)) *ChatUI {
@@ -112,6 +123,12 @@ func (ui *ChatUI) Quit() {
 
 	if ui.program != nil {
 		ui.program.Quit()
+	}
+}
+
+func (ui *ChatUI) ShowDisconnectMessage(message string) {
+	if ui.program != nil {
+		ui.program.Send(disconnectMsg(message))
 	}
 }
 
@@ -215,6 +232,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		if m.disconnected {
+			// If disconnected, any key press quits
+			return m, tea.Quit
+		}
+
 		switch msg.Type {
 		case tea.KeyCtrlC, tea.KeyEsc:
 			// Exit the program
@@ -254,10 +276,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case usersUpdateMsg:
 		m.users = []string(msg)
+
+	case disconnectMsg:
+		m.disconnected = true
+		m.disconnectMsg = string(msg)
+		return m, nil
 	}
 
-	m.textarea, cmd = m.textarea.Update(msg)
-	cmds = append(cmds, cmd)
+	if !m.disconnected {
+		m.textarea, cmd = m.textarea.Update(msg)
+		cmds = append(cmds, cmd)
+	}
 
 	m.viewport, cmd = m.viewport.Update(msg)
 	cmds = append(cmds, cmd)
@@ -282,7 +311,14 @@ func (m model) View() string {
 		userList,
 	)
 
-	input := inputStyle.Width(m.width - 22).Render(m.textarea.View())
+	var input string
+	if m.disconnected {
+		message := m.disconnectMsg + "\nPress Enter to exit..."
+		input = disconnectStyle.Width(m.width - 22).Render(message)
+	} else {
+		input = inputStyle.Width(m.width - 22).Render(m.textarea.View())
+	}
+
 	fullHeader := lipgloss.JoinHorizontal(lipgloss.Top, header, userListHeader)
 
 	return lipgloss.JoinVertical(

@@ -52,8 +52,9 @@ func handleConnection(conn net.Conn, server *ChatServer) {
 	server.Clients[client.Name] = client
 	defer delete(server.Clients, client.Name)
 
-	// TODO: broadcast join
-	// TODO: defer quit broadcast
+	// Broadcast join
+	broadcastJoin(client)
+	defer broadcastQuit(client)
 
 	// Main communication loop
 	for {

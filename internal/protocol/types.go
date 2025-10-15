@@ -1,18 +1,43 @@
 package protocol
 
-import "io"
+import (
+	"io"
+)
 
 // Serializable is an interface for types that can
 // be serialized to and deserialized from a reader/writer.
 type Serializable interface {
 	Serialize(io.Writer) error
 	Deserialize(io.Reader) error
+	ToBytes() ([]byte, error)
+}
+
+type String struct {
+	Serializable
+	Value string
+}
+
+func (s *String) ToBytes() ([]byte, error) {
+	return toBytes(s)
+}
+
+func (s *String) Serialize(w io.Writer) error {
+	return writeString(w, s.Value)
+}
+
+func (s *String) Deserialize(r io.Reader) (err error) {
+	s.Value, err = readString(r)
+	return err
 }
 
 type Message struct {
 	Serializable
 	Sender  string
 	Content string
+}
+
+func (m *Message) ToBytes() ([]byte, error) {
+	return toBytes(m)
 }
 
 func (m *Message) Serialize(w io.Writer) error {
@@ -42,6 +67,10 @@ type User struct {
 	Name string
 }
 
+func (u *User) ToBytes() ([]byte, error) {
+	return toBytes(u)
+}
+
 func (u *User) Serialize(w io.Writer) error {
 	return writeString(w, u.Name)
 }
@@ -54,6 +83,10 @@ func (u *User) Deserialize(r io.Reader) (err error) {
 type UserList struct {
 	Serializable
 	Users []User
+}
+
+func (ul *UserList) ToBytes() ([]byte, error) {
+	return toBytes(ul)
 }
 
 func (ul *UserList) Serialize(w io.Writer) error {
@@ -91,6 +124,10 @@ type Challenge struct {
 	Data []byte
 }
 
+func (c *Challenge) ToBytes() ([]byte, error) {
+	return toBytes(c)
+}
+
 func (c *Challenge) Serialize(w io.Writer) error {
 	if err := writeUint16(w, uint16(len(c.Data))); err != nil {
 		return err
@@ -118,6 +155,10 @@ type Error struct {
 	Serializable
 	Code    uint16
 	Message string
+}
+
+func (e *Error) ToBytes() ([]byte, error) {
+	return toBytes(e)
 }
 
 func (e *Error) Serialize(w io.Writer) error {

@@ -1,6 +1,7 @@
 package protocol
 
 import (
+	"bytes"
 	"encoding/binary"
 	"io"
 )
@@ -124,4 +125,12 @@ func readString(r io.Reader) (string, error) {
 		return "", err
 	}
 	return string(buf), nil
+}
+
+func toBytes(s Serializable) ([]byte, error) {
+	buffer := new(bytes.Buffer)
+	if err := s.Serialize(buffer); err != nil {
+		return nil, err
+	}
+	return buffer.Bytes(), nil
 }

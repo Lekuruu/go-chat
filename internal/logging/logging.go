@@ -75,6 +75,11 @@ func (c *Logger) GetName() string {
 	return c.name
 }
 
+func (c *Logger) WaitForInput() {
+	fmt.Print("Press Enter to continue...")
+	fmt.Scanln()
+}
+
 func (c *Logger) Info(msg ...any) {
 	if c.level > INFO {
 		return

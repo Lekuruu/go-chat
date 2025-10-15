@@ -103,10 +103,7 @@ func handleMessage(packet *protocol.Packet, client *Client) {
 		return
 	}
 
-	client.Logger.Infof(
-		"Message from %s: %s",
-		message.Sender, message.Content,
-	)
+	client.Logger.Infof("'%s'", message.Content)
 
 	messageBuffer := new(bytes.Buffer)
 	if err := message.Serialize(messageBuffer); err != nil {

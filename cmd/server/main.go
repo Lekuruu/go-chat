@@ -40,6 +40,10 @@ func handleConnection(conn net.Conn, server *ChatServer) {
 	// Authentication stage
 	for {
 		packet, err := client.ReadPacket()
+		if err != nil && err.Error() == "EOF" {
+			client.Logger.Infof("Client disconnected")
+			return
+		}
 		if err != nil {
 			client.Logger.Errorf("Failed to read authentication packet: %v", err)
 			client.SendError(ErrInvalidPacket)

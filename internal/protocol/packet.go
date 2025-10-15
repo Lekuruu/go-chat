@@ -59,7 +59,7 @@ func (packet *Packet) outgoingData(key []byte) []byte {
 	}
 }
 
-func DeserializePacket(reader io.Reader) (*Packet, error) {
+func DeserializePacket(reader io.Reader, key []byte) (*Packet, error) {
 	version, err := readUint8(reader)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func DeserializePacket(reader io.Reader) (*Packet, error) {
 	}
 
 	// Handle data decryption
-	processedData, err := handleIncomingData(packet, nil)
+	processedData, err := handleIncomingData(packet, key)
 	if err != nil {
 		return nil, err
 	}

@@ -25,7 +25,7 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) ReadPacket() (*protocol.Packet, error) {
-	return protocol.DeserializePacket(c.Conn)
+	return protocol.DeserializePacket(c.Conn, c.Server.EncryptionKey)
 }
 
 func (c *Client) SendPacket(packet *protocol.Packet) error {
@@ -51,7 +51,7 @@ func NewClient(conn net.Conn, server *ChatServer) *Client {
 		Conn:            conn,
 		Server:          server,
 		Logger:          logger,
-		Encryption:      protocol.EncryptionTypeAES,
+		Encryption:      protocol.EncryptionTypeNone,
 		IsAuthenticated: false,
 	}
 }

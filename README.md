@@ -4,6 +4,8 @@ A terminal-based chat application written in Go, featuring encrypted communicati
 
 ![Example Screenshot](https://github.com/Lekuruu/go-chat/blob/main/.github/screenshot.png?raw=true)
 
+![Encryption Showcase](https://github.com/Lekuruu/go-chat/blob/main/.github/encryption.png?raw=true)
+
 ## Features
 
 - **Secure Communication**: All messages are encrypted using AES-GCM

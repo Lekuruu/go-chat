@@ -1,0 +1,76 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ created ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            client_binary: client
+            server_binary: server
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            client_binary: client.exe
+            server_binary: server.exe
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24'
+
+    - name: Get dependencies
+      run: go mod download
+
+    - name: Build client
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+      run: go build -v -o ${{ matrix.client_binary }} ./cmd/client
+
+    - name: Build server
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+      run: go build -v -o ${{ matrix.server_binary }} ./cmd/server
+
+    - name: Upload client artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.goos }}-${{ matrix.goarch }}-client
+        path: ${{ matrix.client_binary }}
+        if-no-files-found: error
+
+    - name: Upload server artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.goos }}-${{ matrix.goarch }}-server
+        path: ${{ matrix.server_binary }}
+        if-no-files-found: error
+
+    - name: Upload binaries to release
+      if: github.event_name == 'release'
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          ${{ matrix.client_binary }}
+          ${{ matrix.server_binary }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

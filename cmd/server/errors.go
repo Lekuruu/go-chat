@@ -43,4 +43,5 @@ func NewChatError(code uint16, message string) *ChatError {
 var (
 	ErrInvalidPacket = NewChatError(1, "Received an invalid packet. Please try again!")
 	ErrUnknownPacket = NewChatError(2, "Received an unknown packet. Ensure that the target server is up to date.")
+	ErrNicknameInUse = NewChatError(3, "This nickname is already in use. Please choose another one!")
 )

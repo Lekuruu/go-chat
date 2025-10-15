@@ -10,6 +10,7 @@ type Serializable interface {
 	Serialize(io.Writer) error
 	Deserialize(io.Reader) error
 	ToBytes() ([]byte, error)
+	FromBytes([]byte) error
 }
 
 type String struct {
@@ -19,6 +20,10 @@ type String struct {
 
 func (s *String) ToBytes() ([]byte, error) {
 	return toBytes(s)
+}
+
+func (s *String) FromBytes(data []byte) error {
+	return fromBytes(data, s)
 }
 
 func (s *String) Serialize(w io.Writer) error {
@@ -38,6 +43,10 @@ type Message struct {
 
 func (m *Message) ToBytes() ([]byte, error) {
 	return toBytes(m)
+}
+
+func (m *Message) FromBytes(data []byte) error {
+	return fromBytes(data, m)
 }
 
 func (m *Message) Serialize(w io.Writer) error {
@@ -71,6 +80,10 @@ func (u *User) ToBytes() ([]byte, error) {
 	return toBytes(u)
 }
 
+func (u *User) FromBytes(data []byte) error {
+	return fromBytes(data, u)
+}
+
 func (u *User) Serialize(w io.Writer) error {
 	return writeString(w, u.Name)
 }
@@ -87,6 +100,10 @@ type UserList struct {
 
 func (ul *UserList) ToBytes() ([]byte, error) {
 	return toBytes(ul)
+}
+
+func (ul *UserList) FromBytes(data []byte) error {
+	return fromBytes(data, ul)
 }
 
 func (ul *UserList) Serialize(w io.Writer) error {
@@ -128,6 +145,10 @@ func (c *Challenge) ToBytes() ([]byte, error) {
 	return toBytes(c)
 }
 
+func (c *Challenge) FromBytes(data []byte) error {
+	return fromBytes(data, c)
+}
+
 func (c *Challenge) Serialize(w io.Writer) error {
 	if err := writeUint16(w, uint16(len(c.Data))); err != nil {
 		return err
@@ -159,6 +180,10 @@ type Error struct {
 
 func (e *Error) ToBytes() ([]byte, error) {
 	return toBytes(e)
+}
+
+func (e *Error) FromBytes(data []byte) error {
+	return fromBytes(data, e)
 }
 
 func (e *Error) Serialize(w io.Writer) error {

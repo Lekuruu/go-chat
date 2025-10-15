@@ -127,6 +127,11 @@ func readString(r io.Reader) (string, error) {
 	return string(buf), nil
 }
 
+func fromBytes(data []byte, s Serializable) error {
+	buffer := bytes.NewBuffer(data)
+	return s.Deserialize(buffer)
+}
+
 func toBytes(s Serializable) ([]byte, error) {
 	buffer := new(bytes.Buffer)
 	if err := s.Serialize(buffer); err != nil {

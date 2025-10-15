@@ -51,8 +51,9 @@ func (c *ChatClient) Address() string {
 func (c *ChatClient) AddSystemMessage(format string, args ...interface{}) {
 	if c.UI != nil {
 		c.UI.AddSystemMessage(format, args...)
+	} else {
+		c.Logger.Infof(format, args...)
 	}
-	c.Logger.Infof(format, args...)
 }
 
 func (c *ChatClient) ShowDisconnectMessage() {

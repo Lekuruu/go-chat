@@ -27,7 +27,7 @@ cd go-chat
 
 ### Running the Server
 
-Start the chat server on `localhost:8080`:
+Start the chat server on `localhost:8080` (by default):
 
 ```bash
 go run ./cmd/server
@@ -70,13 +70,24 @@ Note that if you are on windows, you will receive `.exe` files.
 
 ## Configuration
 
-Currently, the encryption key is hardcoded in both the client and server (`A0KWJW3qRCiYcEj3`). Both must use the same 16-byte key for successful authentication.
+The application uses a `config.json` file for configuration.
+On first run, a default configuration file will be automatically created if one doesn't exist.
 
-To change the key, modify the `key` variable in:
-- `cmd/server/main.go`
-- `cmd/client/main.go`
+Example `config.json`:
+```json
+{
+    "server_host": "localhost",
+    "server_port": 8080,
+    "secret_key": "QTBLV0pXM3FSQ2lZY0VqMw=="
+}
+```
 
-This will later on be changed into configuration files.
+**Configuration Options:**
+- `server_host`: The hostname or IP address the server listens on (default: `localhost`)
+- `server_port`: The port number for the server (default: `8080`)
+- `secret_key`: Base64-encoded encryption key used for AES-GCM encryption
+
+**Important:** Both the client and server must use the same `secret_key` for successful authentication. The key should be a base64-encoded string representing a 16-byte key.
 
 ## Protocol
 

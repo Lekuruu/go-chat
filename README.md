@@ -2,6 +2,8 @@
 
 A terminal-based chat application written in Go, featuring encrypted communication using AES-GCM symmetric encryption. This project was created for a school research paper exploring symmetric encryption in real-time communication systems.
 
+![Example Screenshot](https://github.com/Lekuruu/go-chat/blob/main/.github/screenshot.png?raw=true)
+
 ## Features
 
 - **Secure Communication**: All messages are encrypted using AES-GCM

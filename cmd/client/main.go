@@ -6,13 +6,29 @@ import (
 	"net"
 	"os"
 	"strings"
+
+	"github.com/Lekuruu/go-chat/internal/config"
 )
 
-// Example key, we should replace this later
-var key = []byte("A0KWJW3qRCiYcEj3")
-
 func main() {
-	client := NewChatClient("localhost", 8080, key)
+	var clientConfig *config.Config
+
+	created, err := config.EnsureConfig(config.DefaultConfigFilename)
+	if err != nil {
+		fmt.Printf("Failed to create config file: %v\n", err)
+		return
+	}
+	if created {
+		fmt.Printf("Created default config file '%s'\n", config.DefaultConfigFilename)
+	}
+
+	clientConfig, err = config.ReadConfig(config.DefaultConfigFilename)
+	if err != nil {
+		fmt.Printf("Failed to read config file: %v\n", err)
+		return
+	}
+
+	client := NewChatClient(clientConfig.ServerHost, clientConfig.ServerPort, clientConfig.SecretKey)
 	conn, err := net.Dial("tcp", client.Bind())
 	if err != nil {
 		client.Logger.Errorf("Failed to connect to server: %v", err)

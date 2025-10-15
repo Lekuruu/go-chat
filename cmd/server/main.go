@@ -3,30 +3,31 @@ package main
 import (
 	"fmt"
 	"net"
+
+	"github.com/Lekuruu/go-chat/internal/config"
 )
 
 func main() {
 	var server *ChatServer
-	var config *Config
+	var serverConfig *config.Config
 
-	// Ensure config file exists
-	created, err := EnsureConfig(DefaultConfigFilename)
+	created, err := config.EnsureConfig(config.DefaultConfigFilename)
 	if err != nil {
 		fmt.Printf("Failed to create config file: %v\n", err)
 		return
 	}
 	if created {
-		fmt.Println("Created default config file 'server.json'.")
+		fmt.Printf("Created default config file '%s'\n", config.DefaultConfigFilename)
 	}
 
-	config, err = ReadConfig(DefaultConfigFilename)
+	serverConfig, err = config.ReadConfig(config.DefaultConfigFilename)
 	if err != nil {
 		fmt.Printf("Failed to read config file: %v\n", err)
 		return
 	}
 
 	connectionHandler := func(conn net.Conn) { handleConnection(conn, server) }
-	server = NewChatServer(config.ServerHost, config.ServerPort, config.SecretKey, connectionHandler)
+	server = NewChatServer(serverConfig.ServerHost, serverConfig.ServerPort, serverConfig.SecretKey, connectionHandler)
 	server.Run()
 }
 

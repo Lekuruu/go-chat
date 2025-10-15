@@ -125,6 +125,5 @@ fabric.properties
 # Windows build scripts
 build*.ps1
 
-# Configuration files
-server.json
-client.json
+# Configuration file
+config.json

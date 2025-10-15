@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ type Config struct {
 	SecretKey  []byte `json:"secret_key"`
 }
 
-const DefaultConfigFilename = "server.json"
+const DefaultConfigFilename = "config.json"
 
 func ReadConfig(path string) (*Config, error) {
 	data, err := os.ReadFile(path)

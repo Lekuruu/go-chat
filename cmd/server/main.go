@@ -1,18 +1,32 @@
 package main
 
 import (
+	"fmt"
 	"net"
 )
 
 func main() {
 	var server *ChatServer
-	var key []byte
+	var config *Config
 
-	// Example key, we should replace this later
-	key = []byte("A0KWJW3qRCiYcEj3")
+	// Ensure config file exists
+	created, err := EnsureConfig(DefaultConfigFilename)
+	if err != nil {
+		fmt.Printf("Failed to create config file: %v\n", err)
+		return
+	}
+	if created {
+		fmt.Println("Created default config file 'server.json'.")
+	}
+
+	config, err = ReadConfig(DefaultConfigFilename)
+	if err != nil {
+		fmt.Printf("Failed to read config file: %v\n", err)
+		return
+	}
 
 	connectionHandler := func(conn net.Conn) { handleConnection(conn, server) }
-	server = NewChatServer("localhost", 8080, key, connectionHandler)
+	server = NewChatServer(config.ServerHost, config.ServerPort, config.SecretKey, connectionHandler)
 	server.Run()
 }
 

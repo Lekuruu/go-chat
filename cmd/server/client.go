@@ -51,6 +51,7 @@ func NewClient(conn net.Conn, server *ChatServer) *Client {
 		Conn:            conn,
 		Server:          server,
 		Logger:          logger,
+		Encryption:      protocol.EncryptionTypeAES,
 		IsAuthenticated: false,
 	}
 }

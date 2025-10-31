@@ -80,7 +80,8 @@ Example `config.json`:
 {
     "server_host": "localhost",
     "server_port": 8080,
-    "secret_key": "QTBLV0pXM3FSQ2lZY0VqMw=="
+    "secret_key": "QTBLV0pXM3FSQ2lZY0VqMw==",
+    "encryption_enabled": true
 }
 ```
 
@@ -88,6 +89,7 @@ Example `config.json`:
 - `server_host`: The hostname or IP address the server listens on (default: `localhost`)
 - `server_port`: The port number for the server (default: `8080`)
 - `secret_key`: Base64-encoded encryption key used for AES-GCM encryption
+- `encryption_enabled`: Boolean to enable or disable encryption (default: `true`)
 
 **Important:** Both the client and server must use the same `secret_key` for successful authentication. The key should be a base64-encoded string representing a 16-byte key.
 

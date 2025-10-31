@@ -39,7 +39,7 @@ func main() {
 	client.Conn = conn
 	client.Logger.Infof("Connected to %s", client.Address())
 
-	if err := handleAuthentication(client); err != nil {
+	if err := handleAuthentication(client, clientConfig.EncryptionEnabled); err != nil {
 		client.Logger.Error(err)
 		client.Logger.WaitForInput()
 		return
@@ -69,24 +69,28 @@ func main() {
 	client.Conn.Close()
 }
 
-func handleAuthentication(client *ChatClient) error {
+func handleAuthentication(client *ChatClient, encryptionEnabled bool) error {
 	reader := bufio.NewReader(os.Stdin)
 
-	if err := client.SendChallenge(); err != nil {
-		return fmt.Errorf("failed to send challenge: %w", err)
+	if encryptionEnabled {
+		if err := client.SendChallenge(); err != nil {
+			return fmt.Errorf("failed to send challenge: %w", err)
+		}
+
+		packet, err := client.ReadPacket()
+		if err != nil {
+			return fmt.Errorf("failed to read challenge response: %w", err)
+		}
+
+		// We expect a challenge response packet here
+		handler, ok := AuthHandlers[packet.Id]
+		if !ok {
+			return fmt.Errorf("received unexpected packet during authentication")
+		}
+		handler(packet, client)
 	}
 
-	packet, err := client.ReadPacket()
-	if err != nil {
-		return fmt.Errorf("failed to read challenge response: %w", err)
-	}
-
-	handler, ok := AuthHandlers[packet.Id]
-	if !ok {
-		return fmt.Errorf("received unexpected packet during authentication")
-	}
-	handler(packet, client)
-
+	// Let user enter their nickname
 	fmt.Print("Enter your nickname: ")
 	nickname, err := reader.ReadString('\n')
 	if err != nil {
@@ -111,12 +115,12 @@ func handleAuthentication(client *ChatClient) error {
 	}
 
 	// We now expect either an acknowledgment or an error packet
-	packet, err = client.ReadPacket()
+	packet, err := client.ReadPacket()
 	if err != nil {
 		return fmt.Errorf("failed to read authentication response: %w", err)
 	}
 
-	handler, ok = AuthHandlers[packet.Id]
+	handler, ok := AuthHandlers[packet.Id]
 	if !ok {
 		return fmt.Errorf("unexpected packet during authentication")
 	}

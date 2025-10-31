@@ -6,9 +6,10 @@ import (
 )
 
 type Config struct {
-	ServerHost string `json:"server_host"`
-	ServerPort int    `json:"server_port"`
-	SecretKey  []byte `json:"secret_key"`
+	EncryptionEnabled bool   `json:"encryption_enabled"`
+	ServerHost        string `json:"server_host"`
+	ServerPort        int    `json:"server_port"`
+	SecretKey         []byte `json:"secret_key"`
 }
 
 const DefaultConfigFilename = "config.json"
@@ -30,9 +31,10 @@ func ReadConfig(path string) (*Config, error) {
 
 func DefaultConfig() *Config {
 	return &Config{
-		ServerHost: "localhost",
-		ServerPort: 8080,
-		SecretKey:  []byte("A0KWJW3qRCiYcEj3"),
+		EncryptionEnabled: true,
+		ServerHost:        "localhost",
+		ServerPort:        8080,
+		SecretKey:         []byte("A0KWJW3qRCiYcEj3"),
 	}
 }
 

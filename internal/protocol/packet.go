@@ -1,6 +1,8 @@
 package protocol
 
-import "io"
+import (
+	"io"
+)
 
 type Packet struct {
 	Version    uint8
@@ -32,9 +34,6 @@ func (packet *Packet) Serialize(writer io.Writer, key []byte) error {
 
 	// Encrypt data if needed
 	outgoing := packet.outgoingData(key)
-	if outgoing == nil {
-		return io.ErrUnexpectedEOF
-	}
 
 	// Write the packet body
 	if err := writeUint32(writer, uint32(len(outgoing))); err != nil {

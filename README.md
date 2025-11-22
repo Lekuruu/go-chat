@@ -93,7 +93,7 @@ Example `config.json`:
 
 **Important:** Both the client and server must use the same `secret_key` for successful authentication. The key should be a base64-encoded string representing a 16-byte key.
 
-## Protocol
+## ECP (Encrypted Chat Protocol)
 
 Every packet that is sent between the client and the server uses the following structure:
 

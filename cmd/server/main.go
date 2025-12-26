@@ -28,6 +28,7 @@ func main() {
 
 	connectionHandler := func(conn net.Conn) { handleConnection(conn, server) }
 	server = NewChatServer(serverConfig.ServerHost, serverConfig.ServerPort, serverConfig.SecretKey, connectionHandler)
+	server.RequireEncryption = serverConfig.EncryptionEnabled
 	server.Run()
 }
 

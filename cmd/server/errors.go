@@ -45,4 +45,5 @@ var (
 	ErrUnknownPacket        = NewChatError(2, "Received an unknown packet. Ensure that the target server is up to date.")
 	ErrNicknameInUse        = NewChatError(3, "This nickname is already in use. Please choose another one!")
 	ErrAlreadyAuthenticated = NewChatError(4, "You are already authenticated.")
+	ErrEncryptionRequired   = NewChatError(5, "Encryption is required to perform this action.")
 )

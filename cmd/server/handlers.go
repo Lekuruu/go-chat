@@ -53,6 +53,12 @@ func handleNickname(packet *protocol.Packet, client *Client) {
 		return
 	}
 
+	if client.Encryption == protocol.EncryptionTypeNone && client.Server.RequireEncryption {
+		client.Logger.Warning("Client attempted to set nickname without encryption")
+		client.SendError(ErrEncryptionRequired)
+		return
+	}
+
 	var nicknameString protocol.String
 
 	if err := nicknameString.FromBytes(packet.Data); err != nil {

@@ -47,43 +47,43 @@ type disconnectMsg string
 var (
 	headerStyle = lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("39")).
+			Foreground(lipgloss.Color("33")).
 			BorderStyle(lipgloss.NormalBorder()).
 			BorderBottom(true).
-			BorderForeground(lipgloss.Color("240"))
+			BorderForeground(lipgloss.Color("245"))
 
 	messageStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("252"))
+			Foreground(lipgloss.Color("235"))
 
 	senderStyle = lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("86"))
+			Foreground(lipgloss.Color("30"))
 
 	systemStyle = lipgloss.NewStyle().
 			Italic(true).
-			Foreground(lipgloss.Color("243"))
+			Foreground(lipgloss.Color("244"))
 
 	timestampStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("241"))
+			Foreground(lipgloss.Color("244"))
 
 	userListStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("229")).
+			Foreground(lipgloss.Color("130")).
 			BorderStyle(lipgloss.NormalBorder()).
 			BorderLeft(true).
-			BorderForeground(lipgloss.Color("240")).
+			BorderForeground(lipgloss.Color("245")).
 			PaddingLeft(1)
 
 	inputStyle = lipgloss.NewStyle().
 			BorderStyle(lipgloss.NormalBorder()).
 			BorderTop(true).
-			BorderForeground(lipgloss.Color("240"))
+			BorderForeground(lipgloss.Color("245"))
 
 	disconnectStyle = lipgloss.NewStyle().
 			Bold(true).
 			Foreground(lipgloss.Color("196")).
 			BorderStyle(lipgloss.NormalBorder()).
 			BorderTop(true).
-			BorderForeground(lipgloss.Color("240")).
+			BorderForeground(lipgloss.Color("245")).
 			Padding(1)
 )
 
